@@ -49,6 +49,135 @@ service TicketService {
     }
 }
 
+service PostService {
+    rpc likePost (LikePostRequest) returns (LikePostResponse) {
+        option (google.api.http) = {
+            post: "/v1/helpdesk/post/{post_id}/like"
+            body: "*"
+        };
+    }
+
+    rpc removeLike (RemoveLikeRequest) returns (RemoveLikeResponse) {
+        option (google.api.http) = {
+            delete: "/v1/helpdesk/post/like/{like_id}"
+        };
+    }
+
+    rpc bindCategoryToLike (BindCategoryToLikeRequest) returns (BindCategoryToLikeResponse) {
+        option (google.api.http) = {
+            post: "/v1/helpdesk/post/like/{like_id}"
+            body: "*"
+        };
+    }
+
+    rpc unbindCategoryFromLike (UnbindCategoryFromLikeRequest) returns (UnbindCategoryFromLikeResponse) {
+        option (google.api.http) = {
+            delete: "/v1/helpdesk/post/like/category/{category_id}"
+        };
+    }
+}
+
+message LikePostRequest {
+    uint32 post_id = 1;
+}
+
+message LikePostResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {}
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            INTERNAL_ERROR = 0;
+            POST_NOT_FOUND = 1;
+        }
+    }
+}
+
+message RemoveLikeRequest {
+    uint32 like_id = 1;
+}
+
+message RemoveLikeResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {}
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            INTERNAL_ERROR = 0;
+            LIKE_NOT_FOUND = 1;
+        }
+    }
+}
+
+message BindCategoryToLikeRequest {
+    uint32 like_id = 1;
+    Category category = 2;
+    enum Category {
+        QUICK_ANSWER = 0;
+        DETAILED_ANSWER = 1;
+        EDUCATIONAL_ANSWER = 2;
+        NICE_TALKING = 3;
+        PROFESSIONAL_HELP = 4;
+        WOW_HELP = 5;
+    }
+}
+
+message BindCategoryToLikeResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {}
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            INTERNAL_ERROR = 0;
+            LIKE_NOT_FOUND = 1;
+        }
+    }
+}
+
+message UnbindCategoryFromLikeRequest {
+    uint32 category_id = 1;
+}
+
+message UnbindCategoryFromLikeResponse {
+    oneof result {
+        Success success = 1;
+        Error error = 2;
+    }
+
+    message Success {}
+
+    message Error {
+        Code code = 1;
+        string message = 2;
+
+        enum Code {
+            INTERNAL_ERROR = 0;
+            CATEGORY_NOT_FOUND = 1;
+        }
+    }
+}
+
 message CreateRequest {
     string subject = 1;
     string text = 2;
